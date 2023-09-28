@@ -24,21 +24,23 @@ int main()
     int msgqid;
     int len;
     key_t key;
-    if ((key = ftok("client.c", 85)) == -1)
+    char output[200];
+
+    int client_id;
+    printf("Enter CLient-ID: ");
+    scanf("%d", &client_id);
+
+    if ((key = ftok("server.c", 85)) == -1)
     {
-        perror("ftok returned -1");
+        perror("ftok returned -1\n");
         exit(1);
     }
 
     if ((msgqid = msgget(key, PERMS)) == -1)
     {
-        perror("Failed to assign Message queue identifier");
+        perror("Failed to assign Message queue identifier\n");
         exit(1);
     }
-
-    int client_id;
-    printf("Enter CLient-ID: ");
-    scanf("%d", &client_id);
 
     while (true)
     {
@@ -59,8 +61,19 @@ int main()
             strcpy(buf.mtext, "1");
             if (msgsnd(msgqid, &buf, sizeof(buf), 0) == -1)
             {
-                perror("Failed to send message");
+                perror("Failed to send message\n");
                 exit(1);
+            }
+            sleep(1);
+            if (msgrcv(msgqid, &buf, sizeof(buf), 0) == -1)
+            {
+                perror("msgrcv returned -1\n");
+                exit(1);
+            }
+            if (buf.mtype == client_id)
+            {
+                strcpy(output, buf.mtext);
+                printf("%s\n", output);
             }
             break;
         case 2:
@@ -70,8 +83,19 @@ int main()
             strcat(buf.mtext, filename);
             if (msgsnd(msgqid, &buf, sizeof(buf), 0) == -1)
             {
-                perror("Failed to send message");
+                perror("Failed to send message\n");
                 exit(1);
+            }
+            sleep(1);
+            if (msgrcv(msgqid, &buf, sizeof(buf), 0) == -1)
+            {
+                perror("msgrcv returned -1\n");
+                exit(1);
+            }
+            if (buf.mtype == client_id)
+            {
+                strcpy(output, buf.mtext);
+                printf("%s\n", output);
             }
             break;
         case 3:
@@ -81,8 +105,19 @@ int main()
             strcat(buf.mtext, filename);
             if (msgsnd(msgqid, &buf, sizeof(buf), 0) == -1)
             {
-                perror("Failed to send message");
+                perror("Failed to send message\n");
                 exit(1);
+            }
+            sleep(1);
+            if (msgrcv(msgqid, &buf, sizeof(buf), 0) == -1)
+            {
+                perror("msgrcv returned -1\n");
+                exit(1);
+            }
+            if (buf.mtype == client_id)
+            {
+                strcpy(output, buf.mtext);
+                printf("%s\n", output);
             }
             break;
         case 4:
